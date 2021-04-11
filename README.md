@@ -5,11 +5,12 @@
 Purpose of this application is for studying: golang + postgres, golang testing, postgres+docker for testing.
 
 Step:
-  1. Create base scaffold for the whole program. Model + App + base main and main_test
-  2. Create .env
-  3. Test connect with db. In this case, I created a docker postgres container.
-  4. Create all test case
-  5. Run test case to see if all return 404.
+
+1. Create base scaffold for the whole program. Model + App + base main and main_test
+2. Create .env
+3. Test connect with db. In this case, I created a docker postgres container.
+4. Create all test case
+5. Run test case to see if all return 404.
 
 ## Dependencies
 
@@ -195,7 +196,18 @@ os.Getenv(key)
 
 - So a better rule of thumb is this:
 
-    - Use `json.Decoder` if your data is coming from an io.Reader stream, or you need to decode multiple values from a stream of data.
-    - Use`json.Unmarshal` if you already have the JSON data in memory.
+  - Use `json.Decoder` if your data is coming from an io.Reader stream, or you need to decode multiple values from a stream of data.
+  - Use`json.Unmarshal` if you already have the JSON data in memory.
 
 For the case of reading from an HTTP request, I'd pick `json.Decoder` since you're obviously reading from a stream. However, in the testing, we already has JSON data in the memeory.
+
+### Query with postgres
+
+- To **get** or **create** -> `db.QueryRow()`: only 1 row or `db.Query()`: multiple rows
+- To **delete** or **update** -> `db.Exec()`
+- **Scan()**, to get more info go to `model.go`:
+  - When get results back from **get** requests, use `Scan()` to modify current variable with the result
+  - `db.Query()` will return `sql.rows`:
+    - Always `defer rows.Close()`
+    - To loop over rows: `for rows.Next()`
+    - Inside the for loop, rows variable now will point over each row. To get the value out of row. Use `Scan`
