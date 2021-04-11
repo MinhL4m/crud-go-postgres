@@ -18,6 +18,21 @@ Step:
 
 - lib\pq: Go postgres driver for Go's database/sql package
 
+## Run test
+
+`go test -v`
+
+## Structure
+
+Main -> App -> Model -> DB
+
+- Instead of DB return Model, methods in model will access db and get db then directly modify the model.
+
+```go
+p := product{ID: id}
+p.getProduct(a.DB) // p right now will by modify with all the information returned from db 
+```
+
 ## Learnt
 
 ### Postgres + Docker for testing
@@ -196,7 +211,7 @@ os.Getenv(key)
 
 - So a better rule of thumb is this:
 
-  - Use `json.Decoder` if your data is coming from an io.Reader stream, or you need to decode multiple values from a stream of data.
+  - Use `json.Decoder` if your data is coming from an io.Reader stream, or you need to decode multiple values from a stream of data. res.Body is stream (need to close()) therefore need to use Decoder stead of Unmarshal.
   - Use`json.Unmarshal` if you already have the JSON data in memory.
 
 For the case of reading from an HTTP request, I'd pick `json.Decoder` since you're obviously reading from a stream. However, in the testing, we already has JSON data in the memeory.
@@ -211,3 +226,21 @@ For the case of reading from an HTTP request, I'd pick `json.Decoder` since you'
     - Always `defer rows.Close()`
     - To loop over rows: `for rows.Next()`
     - Inside the for loop, rows variable now will point over each row. To get the value out of row. Use `Scan`
+
+### Request Payload vs Form Data
+
+- [Stackoverflow](https://stackoverflow.com/questions/23118249/whats-the-difference-between-request-payload-vs-form-data-as-seen-in-chrome)
+
+- Summary:
+  - Request payload or payload body is sent using `PUT` or `POST`
+  ```json
+  POST /some-path HTTP/1.1
+  Content-Type: application/json
+  { "foo" : "bar", "name" : "John" }
+  ```
+  - Form data is sent using submit form with `POST`
+  ```json
+  POST /some-path HTTP/1.1
+  Content-Type: application/x-www-form-urlencoded
+  foo=bar&name=John
+  ```
