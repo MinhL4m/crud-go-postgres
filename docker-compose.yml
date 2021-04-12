@@ -1,0 +1,12 @@
+version: '1'
+services:
+    postgres:
+        image: postgres
+        ports:
+            - "5432"
+    server:
+        build: ./
+        volumes:
+            - ./server:/go/src/app
+        ports:
+            - "8080:3000"
