@@ -244,3 +244,19 @@ For the case of reading from an HTTP request, I'd pick `json.Decoder` since you'
   Content-Type: application/x-www-form-urlencoded
   foo=bar&name=John
   ```
+
+### dockerfile
+
+- `FROM golang...` line specifies the base image to start with (this contains the Go tools and libraries, ready to build your program)
+
+- `WORKDIR` line like a `cd` inside the container. If the folder hasn't created, it will be created automatically by docker
+
+-  The `COPY` command tells Docker to copy the Golang source code from the current directory into the container.
+
+- Then the `RUN ...` command tells Docker how to build it.
+
+- a second `FROM SCRATCH` line in this Dockerfile, which tells Docker to start again with a fresh, completely empty container image (called a scratch container), and copy our compiled demo program into it. This is the container image that we'll then go on to run later.
+
+- Using a scratch image saves a lot of space, because we don't actually need the Go tools, or anything else, in order to run our compiled program. Using one container for the build, and another for the final image, is called a **multistage build**. 
+
+- This fresh container gonna copy `/bin/demo` from the previous container.
